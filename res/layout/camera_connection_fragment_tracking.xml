@@ -15,7 +15,8 @@
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
       <org.tensorflow.demo.AutoFitTextureView
           android:id="@+id/texture"
@@ -31,4 +32,40 @@
           android:id="@+id/debug_overlay"
           android:layout_width="match_parent"
           android:layout_height="match_parent"/>
+
+      <org.tensorflow.demo.env.RippleProgress
+          android:layout_margin="16dp"
+          android:layout_centerInParent="true"
+          android:layout_width="64dp"
+          android:layout_height="64dp"
+          android:id="@+id/ripple"
+          android:visibility="visible"
+          android:translationX="-200dp"/>
+
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:textAllCaps="false"
+                android:text = "ZoomOut"
+                android:id="@+id/btn_zoomOut"
+                android:layout_marginLeft="50dp"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:textAllCaps="false"
+                android:text = "ZoomIn"
+                android:id="@+id/btn_zoomIn"
+                android:layout_marginRight="50dp"/>
+
+
+
+      </RelativeLayout>
 </FrameLayout>
