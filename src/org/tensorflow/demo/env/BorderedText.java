@@ -15,6 +15,7 @@ limitations under the License.
 
 package org.tensorflow.demo.env;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -22,6 +23,11 @@ import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.util.Log;
+import android.view.View;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -31,7 +37,12 @@ public class BorderedText {
   private final Paint interiorPaint;
   private final Paint exteriorPaint;
 
+  public static final String color = "#1976D2";
+
   private final float textSize;
+  private Context mContext = null;
+
+
 
   /**
    * Creates a left-aligned bordered text object with a white interior, and a black exterior with
@@ -39,8 +50,9 @@ public class BorderedText {
    *
    * @param textSize text size in pixels
    */
-  public BorderedText(final float textSize) {
+  public BorderedText(final float textSize, final Context context) {
     this(Color.WHITE, Color.BLACK, textSize);
+    mContext = context;
   }
 
   /**
@@ -113,5 +125,13 @@ public class BorderedText {
   public void setTextAlign(final Align align) {
     interiorPaint.setTextAlign(align);
     exteriorPaint.setTextAlign(align);
+  }
+
+  public void setImage(final Canvas canvas, final float posX, final float posY, final RippleProgress rippleProgress) {
+    rippleProgress.setVisibility(View.VISIBLE);
+    canvas.save();
+    canvas.translate(posX, posY);
+    rippleProgress.draw(canvas);
+    canvas.restore();
   }
 }

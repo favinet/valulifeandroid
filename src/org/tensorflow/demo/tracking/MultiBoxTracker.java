@@ -27,6 +27,7 @@ import android.graphics.RectF;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.Toast;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.tensorflow.demo.Classifier.Recognition;
 import org.tensorflow.demo.env.BorderedText;
 import org.tensorflow.demo.env.ImageUtils;
 import org.tensorflow.demo.env.Logger;
+import org.tensorflow.demo.env.RippleProgress;
 
 /**
  * A tracker wrapping ObjectTracker that also handles non-max suppression and matching existing
@@ -97,7 +99,8 @@ public class MultiBoxTracker {
       availableColors.add(color);
     }
 
-    boxPaint.setColor(Color.RED);
+    //boxPaint.setColor(Color.RED);
+    boxPaint.setColor(Color.TRANSPARENT);
     boxPaint.setStyle(Style.STROKE);
     boxPaint.setStrokeWidth(12.0f);
     boxPaint.setStrokeCap(Cap.ROUND);
@@ -107,20 +110,22 @@ public class MultiBoxTracker {
     textSizePx =
         TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, context.getResources().getDisplayMetrics());
-    borderedText = new BorderedText(textSizePx);
+    borderedText = new BorderedText(textSizePx, context);
   }
 
   private Matrix getFrameToCanvasMatrix() {
     return frameToCanvasMatrix;
   }
 
-  public synchronized void drawDebug(final Canvas canvas) {
+  public synchronized void drawDebug(final Canvas canvas, final RippleProgress rippleProgress) {
     final Paint textPaint = new Paint();
-    textPaint.setColor(Color.WHITE);
+    //textPaint.setColor(Color.RED);
+    boxPaint.setColor(Color.TRANSPARENT);
     textPaint.setTextSize(60.0f);
 
     final Paint boxPaint = new Paint();
-    boxPaint.setColor(Color.RED);
+   // boxPaint.setColor(Color.GREEN);
+    boxPaint.setColor(Color.TRANSPARENT);
     boxPaint.setAlpha(200);
     boxPaint.setStyle(Style.STROKE);
 
@@ -128,6 +133,7 @@ public class MultiBoxTracker {
       final RectF rect = detection.second;
       canvas.drawRect(rect, boxPaint);
       canvas.drawText("" + detection.first, rect.left, rect.top, textPaint);
+      borderedText.setImage(canvas, rect.centerX()*2, rect.centerY()-(rect.centerY()/2), rippleProgress);
       borderedText.drawText(canvas, rect.centerX(), rect.centerY(), "" + detection.first);
     }
 
@@ -143,6 +149,7 @@ public class MultiBoxTracker {
 
       if (getFrameToCanvasMatrix().mapRect(trackedPos)) {
         final String labelString = String.format("%.2f", trackedObject.getCurrentCorrelation());
+        borderedText.setImage(canvas, trackedPos.right-(trackedPos.right/2), trackedPos.bottom-(trackedPos.bottom/2), rippleProgress);
         borderedText.drawText(canvas, trackedPos.right, trackedPos.bottom, labelString);
       }
     }
@@ -157,7 +164,7 @@ public class MultiBoxTracker {
     processResults(timestamp, results, frame);
   }
 
-  public synchronized void draw(final Canvas canvas) {
+  public synchronized void draw(final Canvas canvas, RippleProgress rippleProgress) {
     // TODO(andrewharp): This may not work for non-90 deg rotations.
     final float multiplier =
         Math.min(canvas.getWidth() / (float) frameHeight, canvas.getHeight() / (float) frameWidth);
@@ -176,7 +183,8 @@ public class MultiBoxTracker {
               : new RectF(recognition.location);
 
       getFrameToCanvasMatrix().mapRect(trackedPos);
-      boxPaint.setColor(recognition.color);
+     // boxPaint.setColor(recognition.color);
+      boxPaint.setColor(Color.TRANSPARENT);
 
       final float cornerSize = Math.min(trackedPos.width(), trackedPos.height()) / 8.0f;
       canvas.drawRoundRect(trackedPos, cornerSize, cornerSize, boxPaint);
@@ -185,7 +193,10 @@ public class MultiBoxTracker {
           !TextUtils.isEmpty(recognition.title)
               ? String.format("%s %.2f", recognition.title, recognition.detectionConfidence)
               : String.format("%.2f", recognition.detectionConfidence);
-      borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.bottom, labelString);
+
+
+      borderedText.setImage(canvas, trackedPos.centerX()-cornerSize, trackedPos.centerY()-cornerSize, rippleProgress);
+      borderedText.drawText(canvas, trackedPos.centerX()-cornerSize, trackedPos.centerY()+cornerSize, labelString);
     }
   }
 

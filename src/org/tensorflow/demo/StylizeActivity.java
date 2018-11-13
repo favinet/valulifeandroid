@@ -366,7 +366,7 @@ public class StylizeActivity extends CameraActivity implements OnImageAvailableL
     final float textSizePx =
         TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
-    borderedText = new BorderedText(textSizePx);
+    borderedText = new BorderedText(textSizePx, StylizeActivity.this);
     borderedText.setTypeface(Typeface.MONOSPACE);
 
     inferenceInterface = new TensorFlowInferenceInterface(getAssets(), MODEL_FILE);

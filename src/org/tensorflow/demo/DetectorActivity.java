@@ -34,6 +34,8 @@ import android.os.Trace;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.Display;
+import android.view.View;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
@@ -41,6 +43,7 @@ import org.tensorflow.demo.OverlayView.DrawCallback;
 import org.tensorflow.demo.env.BorderedText;
 import org.tensorflow.demo.env.ImageUtils;
 import org.tensorflow.demo.env.Logger;
+import org.tensorflow.demo.env.RippleProgress;
 import org.tensorflow.demo.tracking.MultiBoxTracker;
 import org.tensorflow.demo.R;
 
@@ -116,13 +119,14 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private BorderedText borderedText;
 
   private long lastProcessingTimeMs;
+  private RippleProgress rippleOverlay;
 
   @Override
   public void onPreviewSizeChosen(final Size size, final int rotation) {
     final float textSizePx =
         TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
-    borderedText = new BorderedText(textSizePx);
+    borderedText = new BorderedText(textSizePx, DetectorActivity.this);
     borderedText.setTypeface(Typeface.MONOSPACE);
 
     tracker = new MultiBoxTracker(this);
@@ -174,14 +178,17 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     frameToCropTransform.invert(cropToFrameTransform);
     yuvBytes = new byte[3][];
 
+    //circle
+    rippleOverlay = (RippleProgress) findViewById(R.id.ripple);
+
     trackingOverlay = (OverlayView) findViewById(R.id.tracking_overlay);
     trackingOverlay.addCallback(
         new DrawCallback() {
           @Override
           public void drawCallback(final Canvas canvas) {
-            tracker.draw(canvas);
+            tracker.draw(canvas, rippleOverlay);
             if (isDebug()) {
-              tracker.drawDebug(canvas);
+              tracker.drawDebug(canvas, rippleOverlay);
             }
           }
         });
@@ -316,7 +323,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
             final Canvas canvas = new Canvas(cropCopyBitmap);
             final Paint paint = new Paint();
-            paint.setColor(Color.RED);
+          //  paint.setColor(Color.RED);
             paint.setStyle(Style.STROKE);
             paint.setStrokeWidth(2.0f);
 
