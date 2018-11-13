@@ -35,4 +35,36 @@
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true" />
 
+    <org.tensorflow.demo.env.RippleProgress
+        android:layout_margin="16dp"
+        android:layout_centerInParent="true"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:id="@+id/ripple"
+        android:visibility="visible"
+        android:translationX="-200dp"/>
+
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:textAllCaps="false"
+            android:text = "ZoomOut"
+            android:id="@+id/btn_zoomOut"
+            android:layout_marginLeft="50dp"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:textAllCaps="false"
+            android:text = "ZoomIn"
+            android:id="@+id/btn_zoomIn"
+            android:layout_marginRight="50dp"/>
+
+
+
 </RelativeLayout>
