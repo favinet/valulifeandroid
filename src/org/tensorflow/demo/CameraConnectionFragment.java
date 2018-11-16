@@ -22,7 +22,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
@@ -37,7 +36,6 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
@@ -64,6 +62,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -213,11 +212,33 @@ public class CameraConnectionFragment extends Fragment implements View.OnClickLi
      */
     private final int layout;
 
+    /**
+     * 구글 vision api KEY
+     */
     private static final String CLOUD_VISION_API_KEY = "AIzaSyCM36yxqCOWE95PAtnhJMoWExetymsThPQ";
+
+    /**
+     * 구글 custom search api KEY
+     */
+    private static final String CUSTOM_SEARCH_API_KEY = "AIzaSyAC1D8WmoJhJY6UWLzUpQ2eZfKBF4wfw-Y";
+
+    /**
+     * 구글 custom search api engine
+     */
+    private static final String CUSTOM_SEARCH_API_ENGINE = "010652324153482008826:igm5nfa5pfg";
+
+    /**
+     * 구글 custom search get api url
+     * https://developers.google.com/custom-search/v1/overview
+     * http://codigogenerativo.com/code/google-custom-search-api/
+     */
+    private static final String CUSTOM_SEARCH_API = "https://www.googleapis.com/customsearch/v1?key=%s&cx=%s&q=%s&searchType=image&fileType=png,jpg&alt=json";
 
     private Button btnZoomIn;
     private Button btnZoomOut;
     private Button btnCapture;
+    private Button btnClose;
+    private Button btnImageSearch;
     private RippleProgress rippleOverlay;
     private static final String ANDROID_CERT_HEADER = "X-Android-Cert";
     private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
@@ -225,6 +246,7 @@ public class CameraConnectionFragment extends Fragment implements View.OnClickLi
     private final ConnectionCallback cameraConnectionCallback;
     private static TextView txt_result;
     private ProgressBar mProgressBar;
+    private RelativeLayout container_box;
 
     @SuppressLint("ValidFragment")
     private CameraConnectionFragment(
@@ -331,11 +353,17 @@ public class CameraConnectionFragment extends Fragment implements View.OnClickLi
         rippleOverlay = (RippleProgress) view.findViewById(R.id.ripple);
         txt_result = (TextView) view.findViewById(R.id.txt_result);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
+        btnClose = (Button) view.findViewById(R.id.btn_close);
+        container_box = (RelativeLayout) view.findViewById(R.id.container_box);
+        btnImageSearch = (Button) view.findViewById(R.id.btn_image_search);
 
         btnZoomIn.setOnClickListener(this);
         btnZoomOut.setOnClickListener(this);
         btnCapture.setOnClickListener(this);
         rippleOverlay.setOnClickListener(this);
+        txt_result.setOnClickListener(this);
+        btnClose.setOnClickListener(this);
+        btnImageSearch.setOnClickListener(this);
 
         textureView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -479,6 +507,7 @@ public class CameraConnectionFragment extends Fragment implements View.OnClickLi
                     @Override
                     public void run() {
                         mProgressBar.setVisibility(View.GONE);
+                        container_box.setVisibility(View.VISIBLE);
                         createCameraPreviewSession();
                     }
                 });
@@ -574,10 +603,6 @@ public class CameraConnectionFragment extends Fragment implements View.OnClickLi
             return;
         }
 
-        float ratio;
-        int croppedWidth;
-        int croppedHeight;
-
         try
         {
 
@@ -587,16 +612,12 @@ public class CameraConnectionFragment extends Fragment implements View.OnClickLi
             }
             int width = 640;
             int height = 480;
-            if (jpegSizes != null && 0 < jpegSizes.length) {
-                width = jpegSizes[0].getWidth();
-                height = jpegSizes[0].getHeight();
+            if (jpegSizes != null && jpegSizes.length > 0) {
+                width = jpegSizes[jpegSizes.length-2].getWidth();
+                height = jpegSizes[jpegSizes.length-2].getHeight();
             }
 
-
-            ImageReader previewReader = ImageReader.newInstance(640, height, ImageFormat.JPEG, 1);
-            Log.e("previewReader getWidth : ", "===>" + previewReader.getWidth());
-            Log.e("previewReader getHeight : ", "===>" + previewReader.getHeight());
-
+            ImageReader previewReader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
             List<Surface> outputSurfaces = new ArrayList<>(2);
             outputSurfaces.add(previewReader.getSurface());
             outputSurfaces.add(new Surface(textureView.getSurfaceTexture()));
@@ -612,12 +633,8 @@ public class CameraConnectionFragment extends Fragment implements View.OnClickLi
             captureBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoom);
             // Orientation
             int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
-
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
-
             final File file = new File(Environment.getExternalStorageDirectory() + "/pic.jpg");
-
-
 
             /**
              * ImageReader
@@ -628,13 +645,9 @@ public class CameraConnectionFragment extends Fragment implements View.OnClickLi
                 @Override
                 public void onImageAvailable(ImageReader reader) {
 
-                    Log.e("onImageAvailable 22 getWidth : ", "===>" + reader.getWidth());
-                    Log.e("onImageAvailable 22 getHeight : ", "===>" + reader.getHeight());
                     Image image = null;
                     try {
                         image = reader.acquireLatestImage();
-                        Log.e("onImageAvailable 22 image : ", "===>" + image.getWidth());
-                        Log.e("onImageAvailable 22 image : ", "===>" + image.getHeight());
                         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                         byte[] bytes = new byte[buffer.capacity()];
                         buffer.get(bytes);
@@ -670,11 +683,9 @@ public class CameraConnectionFragment extends Fragment implements View.OnClickLi
                 public void onCaptureCompleted(CameraCaptureSession session,
                                                CaptureRequest request, TotalCaptureResult result) {
                     super.onCaptureCompleted(session, request, result);
-                    Toast.makeText(getActivity(), "Saved:"+file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
 
+                    Toast.makeText(getActivity(), "Saved:"+file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
                     Uri imgUri = Uri.fromFile(new File(file.getAbsolutePath()));
-                    Log.e("file path : ", "===>" + file.getAbsolutePath());
-                    Log.e("file imgUri : ", "===>" + imgUri);
                     Bitmap bitmap = null;
                     try
                     {
@@ -685,12 +696,8 @@ public class CameraConnectionFragment extends Fragment implements View.OnClickLi
                         Log.e("IOException : ", "===>" + e.getMessage());
                         e.printStackTrace();
                     }
-
-                    Log.e("bitmap : ", "===>" + bitmap);
                     callCloudVision(bitmap);
-
                 }
-
             };
 
             cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
@@ -1153,9 +1160,13 @@ public class CameraConnectionFragment extends Fragment implements View.OnClickLi
                         break;
                     case R.id.btn_capture:
                     case R.id.ripple:
-
                         takePicture();
-
+                        break;
+                    case R.id.btn_close:
+                            container_box.setVisibility(View.GONE);
+                        break;
+                    case R.id.btn_image_search :
+                        Toast.makeText(getActivity(), "지기네!", Toast.LENGTH_LONG).show();
                         break;
                 }
             } catch (Exception e) {
