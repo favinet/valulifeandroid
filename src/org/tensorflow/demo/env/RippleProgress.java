@@ -12,6 +12,11 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
+import org.tensorflow.demo.OverlayView;
+
+import java.util.LinkedList;
+import java.util.List;
+
 public class RippleProgress extends View {
 
     public static final int BUBBLE_MAX_RADIUS_IN_DP = 32;
@@ -28,6 +33,7 @@ public class RippleProgress extends View {
 
     private float mFadingCircleRadius;
     private float mColoredCircleRadius;
+
 
     public RippleProgress(Context context) {
         super(context);
@@ -59,11 +65,13 @@ public class RippleProgress extends View {
         mVariablePaint.setColor(Color.parseColor(color));
         mFadingCircleRadius = mBubbleMinRadiusInPx;
         startAnimating();
+
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
         //fading circle
         canvas.drawCircle(mBubbleMaxRadiusInPx,mBubbleMaxRadiusInPx,mFadingCircleRadius,mVariablePaint);
         //draw colored circle
