@@ -107,6 +107,16 @@ public class MultiBoxTracker {
     boxPaint.setStrokeJoin(Join.ROUND);
     boxPaint.setStrokeMiter(100);
 
+    /**
+     * TypedValue
+     * Container for a dynamically typed data value. Primarily used with Resources for holding resource values.
+     */
+
+    /**
+     * public static float applyDimension (int unit, float value, DisplayMetrics metrics)
+     * COMPLEX_UNIT_DIP : TYPE_DIMENSION complex unit: Value is Device Independent Pixels.
+     * 차원을 포함하는 압축되지 않은 복소수 데이터 값을 최종 부동 소수점 값으로 변환합니다. 두 개의 매개 변수 unit과 value는 TYPE_DIMENSION과 같습니다.(?)
+     */
     textSizePx =
         TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, context.getResources().getDisplayMetrics());
