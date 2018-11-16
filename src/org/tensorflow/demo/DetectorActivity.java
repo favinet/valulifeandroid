@@ -16,6 +16,8 @@
 
 package org.tensorflow.demo;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -31,6 +33,7 @@ import android.media.ImageReader;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.os.SystemClock;
 import android.os.Trace;
+import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.Display;
@@ -120,6 +123,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
   private long lastProcessingTimeMs;
   private RippleProgress rippleOverlay;
+
 
   @Override
   public void onPreviewSizeChosen(final Size size, final int rotation) {
@@ -239,13 +243,21 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
   OverlayView trackingOverlay;
 
+  @SuppressLint("LongLogTag")
   @Override
   public void onImageAvailable(final ImageReader reader) {
+
+   // Log.e("onImageAvailable 11 getWidth : ", "===>" + reader.getWidth());
+  //  Log.e("onImageAvailable 11 getHeight : ", "===>" + reader.getHeight());
     Image image = null;
 
     ++timestamp;
     final long currTimestamp = timestamp;
 
+    /**
+     * public Image acquireLatestImage ()
+     * ImageReader의 대기열에서 최신 이미지를 가져 와서 이전 이미지를 삭제합니다. 새로운 이미지가없는 경우는 null를 돌려줍니다.
+     */
     try {
       image = reader.acquireLatestImage();
 
