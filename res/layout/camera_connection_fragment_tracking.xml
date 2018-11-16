@@ -80,16 +80,40 @@
                 android:layout_alignParentBottom="true"/>
 
 
-          <TextView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:id="@+id/txt_result"
-              android:layout_centerVertical="true"
-              android:layout_centerHorizontal="true"
-              android:textColor="@android:color/white"
-              android:textSize="20sp"
-              android:visibility="invisible"
-              android:background="@android:color/black"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/container_box"
+                android:visibility="gone">
+
+                  <TextView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/txt_result"
+                      android:layout_centerVertical="true"
+                      android:layout_centerHorizontal="true"
+                      android:textColor="@android:color/white"
+                      android:textSize="20sp"
+                      android:visibility="invisible"
+                      android:background="@android:color/black"/>
+
+                  <Button
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/btn_image_search"
+                      android:text="Image Search"
+                      android:layout_margin="10dp"/>
+
+                  <Button
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/btn_close"
+                      android:text="close"
+                      android:layout_alignParentRight="true"
+                      android:layout_margin="10dp"/>
+
+
+            </RelativeLayout>
 
           <ProgressBar
               android:layout_width="wrap_content"
