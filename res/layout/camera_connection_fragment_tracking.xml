@@ -20,8 +20,10 @@
 
       <org.tensorflow.demo.AutoFitTextureView
           android:id="@+id/texture"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"/>
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_marginBottom="60dp"
+          android:layout_alignParentBottom="true" />
 
       <org.tensorflow.demo.OverlayView
           android:id="@+id/tracking_overlay"
@@ -32,6 +34,8 @@
           android:id="@+id/debug_overlay"
           android:layout_width="match_parent"
           android:layout_height="match_parent"/>
+
+
 
       <org.tensorflow.demo.env.RippleProgress
           android:layout_margin="16dp"
@@ -66,6 +70,34 @@
                 android:layout_marginRight="50dp"/>
 
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textAllCaps="false"
+                android:text = "Capture"
+                android:id="@+id/btn_capture"
+                android:layout_alignParentBottom="true"/>
+
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:id="@+id/txt_result"
+              android:layout_centerVertical="true"
+              android:layout_centerHorizontal="true"
+              android:textColor="@android:color/white"
+              android:textSize="20sp"
+              android:visibility="invisible"
+              android:background="@android:color/black"/>
+
+          <ProgressBar
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_centerHorizontal="true"
+              android:layout_centerVertical="true"
+              android:id="@+id/progress"
+              android:visibility="invisible"/>
 
       </RelativeLayout>
 </FrameLayout>
