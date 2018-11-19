@@ -364,6 +364,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     Trace.endSection();
   }
 
+
+
   @Override
   protected int getLayoutId() {
     return R.layout.camera_connection_fragment_tracking;

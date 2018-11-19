@@ -17,8 +17,6 @@
 package org.tensorflow.demo;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.pm.PackageManager;
 import android.media.Image.Plane;
 import android.media.ImageReader.OnImageAvailableListener;
@@ -26,6 +24,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Size;
 import android.view.KeyEvent;
 import android.view.WindowManager;
@@ -35,7 +36,7 @@ import org.tensorflow.demo.env.Logger;
 
 import java.nio.ByteBuffer;
 
-public abstract class CameraActivity extends Activity implements OnImageAvailableListener {
+public abstract class CameraActivity extends AppCompatActivity implements OnImageAvailableListener {
   private static final Logger LOGGER = new Logger();
 
   private static final int PERMISSIONS_REQUEST = 1;
@@ -166,10 +167,9 @@ public abstract class CameraActivity extends Activity implements OnImageAvailabl
             getLayoutId(),
             getDesiredPreviewFrameSize());
 
-    getFragmentManager()
-        .beginTransaction()
-        .replace(R.id.container, fragment)
-        .commit();
+    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+    fragmentTransaction.replace(R.id.container, fragment);
+    fragmentTransaction.commitAllowingStateLoss();
   }
 
   protected void fillBytes(final Plane[] planes, final byte[][] yuvBytes) {

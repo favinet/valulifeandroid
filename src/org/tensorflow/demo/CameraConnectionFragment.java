@@ -21,9 +21,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
@@ -83,6 +83,7 @@ import org.tensorflow.demo.env.Logger;
 import org.tensorflow.demo.env.PackageManagerUtils;
 import org.tensorflow.demo.env.RippleProgress;
 import org.tensorflow.demo.env.Utils;
+import org.tensorflow.demo.ui.fragment.BaseFragment;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -101,7 +102,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 @SuppressLint("ValidFragment")
-public class CameraConnectionFragment extends Fragment implements View.OnClickListener {
+public class CameraConnectionFragment extends BaseFragment implements View.OnClickListener {
 
     private static final Logger LOGGER = new Logger();
 
@@ -497,7 +498,7 @@ public class CameraConnectionFragment extends Fragment implements View.OnClickLi
             return "Cloud Vision API request failed. Check logs for details.";
         }
 
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(final String result) {
             Activity activity = mActivityWeakReference.get();
             if (activity != null && !activity.isFinishing()) {
                 txt_result.setVisibility(View.VISIBLE);
@@ -508,7 +509,6 @@ public class CameraConnectionFragment extends Fragment implements View.OnClickLi
                     public void run() {
                         mProgressBar.setVisibility(View.GONE);
                         container_box.setVisibility(View.VISIBLE);
-                        createCameraPreviewSession();
                     }
                 });
             }
@@ -605,7 +605,6 @@ public class CameraConnectionFragment extends Fragment implements View.OnClickLi
 
         try
         {
-
             Size[] jpegSizes = null;
             if (characteristics != null) {
                 jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
@@ -841,8 +840,7 @@ public class CameraConnectionFragment extends Fragment implements View.OnClickLi
             // device this code runs.
             // TODO(andrewharp): abstract ErrorDialog/RuntimeException handling out into new method and
             // reuse throughout app.
-            ErrorDialog.newInstance(getString(R.string.camera_error))
-                    .show(getChildFragmentManager(), FRAGMENT_DIALOG);
+          //  ErrorDialog.newInstance(getString(R.string.camera_error)).show(getChildFragmentManager(), FRAGMENT_DIALOG);
             throw new RuntimeException(getString(R.string.camera_error));
         }
 
@@ -932,10 +930,7 @@ public class CameraConnectionFragment extends Fragment implements View.OnClickLi
                         final CameraCaptureSession session,
                         final CaptureRequest request,
                         final TotalCaptureResult result) {
-                   // Toast.makeText(getActivity(), "Saved:", Toast.LENGTH_SHORT).show();
                 }
-
-
             };
 
     /**
@@ -1166,7 +1161,27 @@ public class CameraConnectionFragment extends Fragment implements View.OnClickLi
                             container_box.setVisibility(View.GONE);
                         break;
                     case R.id.btn_image_search :
-                        Toast.makeText(getActivity(), "지기네!", Toast.LENGTH_LONG).show();
+                        String q = txt_result.getText().toString();
+                        String[] qArray = q.split("\n");
+                        int qLength = qArray.length;
+                        Log.e("qLength : ", "===>" + qLength);
+                        if(qLength > 2)
+                        {
+                            Log.e("qArray : ", "===>" + qArray[2]);
+                            qArray = qArray[2].split(":");
+                            qLength = qArray.length;
+                            Log.e("qLength2222 : ", "===>" + qLength);
+                            if(qLength > 0)
+                            {
+                                q = qArray[1].replace(" ", "");
+                            }
+                        }
+
+                        Log.e("q11111 : ", "===>" + q);
+
+                        Intent intent = new Intent(getActivity(), ImageSearchListActivity.class);
+                        intent.putExtra("q", q);
+                        getActivity().startActivity(intent);
                         break;
                 }
             } catch (Exception e) {
