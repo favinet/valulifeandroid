@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/use_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp">
+    </android.support.v7.widget.RecyclerView>
+
+    <org.tensorflow.demo.ui.fragment.view.ProgressWheel
+        android:id="@+id/progress_wheel"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_centerInParent="true"
+        app:matProg_barColor="@color/bgColorDust_3"
+        android:visibility="invisible"/>
+
+</RelativeLayout>

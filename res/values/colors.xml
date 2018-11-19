@@ -15,5 +15,14 @@
  limitations under the License.
 -->
 <resources>
+    <color name="colorPrimary">#30343e</color>
+    <color name="colorPrimaryDark">#30343e</color>
+    <color name="colorPrimarySub">#c5402c</color>
+    <color name="colorPrimaryDarkSub">#c5402c</color>
+    <color name="colorAccent">#FF4081</color>
     <color name="control_background">#cc4285f4</color>
+    <color name="bgColorDust_1">#6cc04e</color>
+    <color name="bgColorDust_2">#009cff</color>
+    <color name="bgColorDust_3">#ba8b77</color>
+    <color name="bgColorDust_4">#f14646</color>
 </resources>
